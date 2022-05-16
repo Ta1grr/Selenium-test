@@ -48,3 +48,15 @@ class Booking(webdriver.Chrome):
             f'td[data-date="{check_out_date}"]'
         )
         check_out_element.click()
+
+    def select_adults(self, count=1):
+        selection_element = self.find_element_by_id('xp__guests__toggle')
+        selection_element.click()
+
+        while True:
+            decrease_adults_element = self.find_element_by_css_selector(
+                'button[aria-label="Decrease number of Adults"]'
+            )
+            decrease_adults_element.click()
+            #If the value of adults reaches 1, then we should get out of the loop
+            
