@@ -1,6 +1,7 @@
 import booking.constants as const
 import os
 from selenium import webdriver
+from booking.booking_filtration import BookingFiltration
 
 class Booking(webdriver.Chrome):
     def __init__(self, driver_path=r"C:/SeleniumDrivers/chromedriver.exe", teardown=False):
@@ -59,4 +60,26 @@ class Booking(webdriver.Chrome):
             )
             decrease_adults_element.click()
             #If the value of adults reaches 1, then we should get out of the loop
-            
+            adults_value_element = self.find_element_by_id('group_adults')
+            adults_value = adults_value_element.get_attribute(
+                'value'
+            ) #Should give back the adults count
+
+            if int(adults_value) == '1':
+                break
+
+        increase_button_element = self.find_element_by_css_selector(
+            'button[aria-label="Increase number of Adults"]'
+        )
+
+        for i in range(count - 1):
+            increase_button_element.click()
+    
+    def click_search(self):
+        search_button = self.find_element_by_css_selector(
+            'button[type="submit"]'
+        )
+        search_button.click()
+
+    def apply_filtration(self):
+        BookingFiltration(driver=self)

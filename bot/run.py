@@ -6,4 +6,5 @@ with Booking() as bot:
     bot.select_place_to_go('New York')
     bot.select_dates(check_in_date='2022-07-01', 
                     check_out_date='2022-07-03')
-    bot.select_adults(count=2)
+    bot.select_adults(count=10)
+    bot.click_search()
