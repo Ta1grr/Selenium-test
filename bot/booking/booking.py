@@ -2,13 +2,17 @@ import booking.constants as const
 import os
 from selenium import webdriver
 from booking.booking_filtration import BookingFiltration
+from booking.booking_report import BookingReport
+from prettytable import PrettyTable
 
 class Booking(webdriver.Chrome):
     def __init__(self, driver_path=r"C:/SeleniumDrivers/chromedriver.exe", teardown=False):
         self.url = driver_path
         self.teardown = teardown
-        os.environ['PATH'] += r"C:/SeleniumDrivers"
-        super(Booking, self).__init__()
+        os.environ['PATH'] += self.driver_path
+        options = webdriver.ChromeOptions()
+        options.add_experimental_option('excludeSwitches', ['enable-logging'])
+        super(Booking, self).__init__(options=options)
         self.implicitly_wait(15)
         self.maximize_window()
 
@@ -82,4 +86,19 @@ class Booking(webdriver.Chrome):
         search_button.click()
 
     def apply_filtration(self):
-        BookingFiltration(driver=self)
+        filtration = BookingFiltration(driver=self)
+        filtration.apply_star_rating(4, 5)
+
+        filtration.sort_price_lowest_first()
+
+    def report_results(self):
+        hotel_boxes = self.find_element_by_id(
+            'hotellist_inner'
+        )
+
+        report = BookingReport(hotel_boxes)
+        table = PrettyTable(
+            field_names=['Hotel Name', 'Hotel Price', 'Hotel Score']
+        )
+        table.add_rows(report.pull_deal_box_attributes())
+        print(table)
